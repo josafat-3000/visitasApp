@@ -1,31 +1,30 @@
-import 'package:flutter/material.dart';
-import 'package:app/pages/signup_page.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:app/main.dart';
-import 'package:app/pages/home.dart';
-class LoginPage extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class GenerarVisita extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _GenerarVisitaState createState() => _GenerarVisitaState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _GenerarVisitaState extends State<GenerarVisita> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Future<void>  _submit() async {
+  Future<void> _submit() async {
     try {
       final form = _formKey.currentState;
-    if (form!.validate()) {
+      if (form!.validate()) {
+        await supabase.auth.signInWithPassword(
+          password: _passwordController.text.trim(),
+          email: _usernameController.text.trim(),
+        );
+        if (!mounted) return;
 
-      await supabase.auth.signInWithPassword(
-        password: _passwordController.text.trim(),
-        email: _usernameController.text.trim(),
-      );
-      if (!mounted) return;
-
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
-    }
+        // Navigator.pushReplacement(
+        //     context, MaterialPageRoute(builder: (context) => Home()));
+      }
     } on AuthException catch (e) {
       debugPrint(e.message);
     }
@@ -35,6 +34,14 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
+       appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 11, 132, 193),
+        title: Image.asset(
+          'lib/images/virtu.png',
+          width: 120,
+          fit: BoxFit.cover,
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(40.0),
@@ -42,21 +49,8 @@ class _LoginPageState extends State<LoginPage> {
             child: Form(
               key: _formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'lib/images/virtu.png',
-                    width: 300,
-                    fit: BoxFit.cover,
-                  ),
-                  const SizedBox(width: 30),
-                  const Icon(
-                    Icons.lock,
-                    color: Color.fromARGB(255, 11, 132, 193),
-                    size: 100,
-                  ),
-                  const SizedBox(height: 30),
-                  Text(
+                  mainAxisAlignment: MainAxisAlignment.center, children: [
+                    Text(
                     'Por favor, Introduce tus credenciales',
                     style: TextStyle(
                       color: Colors.grey[700],
@@ -153,32 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '¿No te haz registrado?',
-                        style: TextStyle(color: Colors.grey[700]),
-                      ),
-                      const SizedBox(width: 4),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>  SingUpPage()));
-                        },
-                        child: const Text(
-                          'Regístrate',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+                  ]
               ),
             ),
           ),

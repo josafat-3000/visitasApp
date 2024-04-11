@@ -1,63 +1,69 @@
 import 'package:flutter/material.dart';
 import 'package:app/pages/login_page.dart';
+import 'package:app/pages/generar_page.dart';
 
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 0, 81, 121),
+        backgroundColor: Color.fromARGB(255, 11, 132, 193),
         title: Image.asset(
           'lib/images/virtu.png',
           width: 120,
           fit: BoxFit.cover,
         ),
       ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: GridView(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10),
+      body:Container(
+          padding: EdgeInsets.all(30.0),
+          child: ListView(
             children: [
-              InkWell(
+              GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => GenerarVisita()),
+                  );
                 },
                 child: Container(
+                  margin: EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: const Color.fromARGB(255, 0, 81, 121),
+                    color: const Color.fromARGB(255, 11, 132, 193),
                   ),
-                  child: const Column(
+                  padding: EdgeInsets.all(20.0),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons
-                            .calendar_month_rounded, // calendar_badge_plus icon
+                        Icons.calendar_today,
                         size: 50,
                         color: Colors.white,
                       ),
+                      SizedBox(height: 10),
                       Text(
                         "Generar visita",
-                        style: TextStyle(color: Colors.white, fontSize: 30),
+                        style: TextStyle(color: Colors.white, fontSize: 20),
                         textAlign: TextAlign.center,
                       )
                     ],
                   ),
                 ),
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
                 },
                 child: Container(
+                  margin: EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Color.fromARGB(255, 0, 81, 121),
+                    color: const Color.fromARGB(255, 11, 132, 193),
                   ),
+                  padding: EdgeInsets.all(20.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -66,37 +72,42 @@ class Home extends StatelessWidget {
                         size: 50,
                         color: Colors.white,
                       ),
+                      SizedBox(height: 10),
                       Text(
                         "Visualizar elementos",
-                        style: TextStyle(color: Colors.white, fontSize: 30),
+                        style: TextStyle(color: Colors.white, fontSize: 20),
                         textAlign: TextAlign.center,
                       )
                     ],
                   ),
                 ),
               ),
-              InkWell(
+              GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
                 },
                 child: Container(
+                  margin: EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Color.fromARGB(255, 0, 81, 121),
+                    color: const Color.fromARGB(255, 11, 132, 193),
                   ),
+                  padding: EdgeInsets.all(20.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons
-                            .check, // calendar_badge_plus icon
+                        Icons.check,
                         size: 50,
                         color: Colors.white,
                       ),
+                      SizedBox(height: 10),
                       Text(
                         "Validar datos",
-                        style: TextStyle(color: Colors.white, fontSize: 30),
+                        style: TextStyle(color: Colors.white, fontSize: 20),
                         textAlign: TextAlign.center,
                       )
                     ],
@@ -104,11 +115,9 @@ class Home extends StatelessWidget {
                 ),
               ),
             ],
-            
           ),
         ),
-      ),
-    );
+      );
   }
 }
 // class Home extends StatelessWidget {
