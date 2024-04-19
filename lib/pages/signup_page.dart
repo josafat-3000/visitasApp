@@ -166,7 +166,7 @@ class _LoginPageState extends State<SingUpPage> {
                       alignment:
                           Alignment.center, // Centra el contenido del botón
                       child: const Text(
-                        'Iniciar Sesión', // Texto del botón
+                        'Registrarse', // Texto del botón
                         style: TextStyle(
                         color: Colors.white, // Color del texto
                         fontWeight: FontWeight.bold, // Peso de la fuente

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:app/pages/login_page.dart';
 import 'package:app/pages/generar_page.dart';
+import 'package:app/pages/visualizar_page.dart';
 
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 11, 132, 193),
+        backgroundColor: const Color.fromARGB(255, 11, 132, 193),
         title: Image.asset(
           'lib/images/virtu.png',
           width: 120,
@@ -15,7 +16,7 @@ class Home extends StatelessWidget {
         ),
       ),
       body:Container(
-          padding: EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(30.0),
           child: ListView(
             children: [
               GestureDetector(
@@ -26,13 +27,13 @@ class Home extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  margin: EdgeInsets.only(bottom: 20.0),
+                  margin: const EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: const Color.fromARGB(255, 11, 132, 193),
                   ),
-                  padding: EdgeInsets.all(20.0),
-                  child: Column(
+                  padding: const EdgeInsets.all(20.0),
+                  child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
@@ -58,13 +59,13 @@ class Home extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  margin: EdgeInsets.only(bottom: 20.0),
+                  margin: const EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: const Color.fromARGB(255, 11, 132, 193),
                   ),
-                  padding: EdgeInsets.all(20.0),
-                  child: Column(
+                  padding: const EdgeInsets.all(20.0),
+                  child: const  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
@@ -84,19 +85,19 @@ class Home extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (context) => VisualizarPage()),
+                  // );
                 },
                 child: Container(
-                  margin: EdgeInsets.only(bottom: 20.0),
+                  margin: const EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: const Color.fromARGB(255, 11, 132, 193),
                   ),
-                  padding: EdgeInsets.all(20.0),
-                  child: Column(
+                  padding: const EdgeInsets.all(20.0),
+                  child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
