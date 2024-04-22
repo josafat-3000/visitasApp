@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app/pages/login_page.dart';
+import 'package:app/main.dart';
 import 'package:app/pages/generar_page.dart';
 import 'package:app/pages/visualizar_page.dart';
 
@@ -8,7 +8,9 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 11, 132, 193),
+        backgroundColor: Colors.white,
+        elevation: 20,
+        shadowColor: Colors.black,
         title: Image.asset(
           'lib/images/virtu.png',
           width: 120,
@@ -30,7 +32,7 @@ class Home extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: const Color.fromARGB(255, 11, 132, 193),
+                    color: const Color.fromARGB(255, 0, 81, 121),
                   ),
                   padding: const EdgeInsets.all(20.0),
                   child: const Column(
@@ -52,17 +54,22 @@ class Home extends StatelessWidget {
                 ),
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
+                  final data = await supabase
+                    .from('visitas_registro')
+                    .select();
+                    print('id: ');
+                    print( data);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
+                    MaterialPageRoute(builder: (context) => VisualizarPage(data: data)),
                   );
                 },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: const Color.fromARGB(255, 11, 132, 193),
+                    color: const Color.fromARGB(255, 0, 81, 121),
                   ),
                   padding: const EdgeInsets.all(20.0),
                   child: const  Column(
@@ -94,7 +101,7 @@ class Home extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: const Color.fromARGB(255, 11, 132, 193),
+                    color: const Color.fromARGB(255, 0, 81, 121),
                   ),
                   padding: const EdgeInsets.all(20.0),
                   child: const Column(

@@ -49,7 +49,9 @@ Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 11, 132, 193),
+        backgroundColor: Colors.white,
+        elevation: 20,
+        shadowColor: Colors.black,
         title: Image.asset(
           'lib/images/virtu.png',
           width: 120,

@@ -12,20 +12,37 @@ class QRGeneratorPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Generador de Código QR'),
       ),
-       body: Center(
-          child: QrImageView(
-            data: qrData,
-            size: 280,
-            // You can include embeddedImageStyle Property if you 
-            //wanna embed an image from your Asset folder
-            embeddedImageStyle: const QrEmbeddedImageStyle(
-              size:  Size(
-                100,
-                100,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            QrImageView(
+              data: qrData,
+              size: 280,
+              // You can include embeddedImageStyle Property if you
+              //wanna embed an image from your Asset folder
+              embeddedImageStyle: const QrEmbeddedImageStyle(
+                size: Size(
+                  100,
+                  100,
+                ),
               ),
             ),
+            IconButton(
+            icon: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.share, size: 30), // Aumenta el tamaño del icono
+                Text('Compartir código QR'), // Agrega la leyenda
+              ],
+            ),
+            onPressed: () {
+              
+            },
           ),
+          ],
         ),
-     );
-   }
+      ),
+    );
+  }
 }

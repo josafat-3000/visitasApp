@@ -4,11 +4,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:app/main.dart';
 import 'package:app/pages/home.dart';
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -37,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(40.0),
+          padding: const EdgeInsets.all(40.0),
           child: Center(
             child: Form(
               key: _formKey,
@@ -52,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(width: 30),
                   const Icon(
                     Icons.lock,
-                    color: Color.fromARGB(255, 11, 132, 193),
+                    color: Color.fromARGB(255, 0, 81, 121),
                     size: 100,
                   ),
                   const SizedBox(height: 30),
@@ -68,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.mail),
+                      prefixIcon: const Icon(Icons.mail),
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
@@ -92,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
+                      prefixIcon: const Icon(Icons.lock),
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.white),
                       ),
@@ -119,6 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Text(
                           '¿Olvidaste tu contraseña?',
+                          
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ],
@@ -128,8 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: _submit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(
-                          255, 11, 132, 193), // Color de fondo del botón
+                      backgroundColor: const Color.fromARGB(255, 0, 81, 121), // Color de fondo del botón
                       padding: const EdgeInsets.all(
                           25), // Espaciado interno del botón
                       shape: RoundedRectangleBorder(
@@ -171,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: const Text(
                           'Regístrate',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: Color.fromARGB(255, 0, 81, 121),
                             fontWeight: FontWeight.bold,
                           ),
                         ),

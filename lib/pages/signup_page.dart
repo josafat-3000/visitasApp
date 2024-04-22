@@ -195,7 +195,7 @@ class _LoginPageState extends State<SingUpPage> {
                         child: const Text(
                           'Inicia Sesión',
                           style: TextStyle(
-                            color: Colors.blue,
+                            color: Color.fromARGB(255, 0, 81, 121),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
