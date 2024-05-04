@@ -3,6 +3,7 @@ import 'package:app/pages/signup_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:app/main.dart';
 import 'package:app/pages/home.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -15,21 +16,31 @@ class LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Future<void>  _submit() async {
+  Future<void> _submit() async {
     try {
       final form = _formKey.currentState;
-    if (form!.validate()) {
+      if (form!.validate()) {
+        await supabase.auth.signInWithPassword(
+          password: _passwordController.text.trim(),
+          email: _usernameController.text.trim(),
+        );
+        if (!mounted) return;
 
-      await supabase.auth.signInWithPassword(
-        password: _passwordController.text.trim(),
-        email: _usernameController.text.trim(),
-      );
-      if (!mounted) return;
-
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
-    }
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Home()));
+      }
     } on AuthException catch (e) {
       debugPrint(e.message);
+      // Muestra un SnackBar con el mensaje de error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Correo o contraseña erroneos: ${e.message}',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -121,7 +132,6 @@ class LoginPageState extends State<LoginPage> {
                       children: [
                         Text(
                           '¿Olvidaste tu contraseña?',
-                          
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ],
@@ -131,7 +141,8 @@ class LoginPageState extends State<LoginPage> {
                   ElevatedButton(
                     onPressed: _submit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 0, 81, 121), // Color de fondo del botón
+                      backgroundColor: const Color.fromARGB(
+                          255, 0, 81, 121), // Color de fondo del botón
                       padding: const EdgeInsets.all(
                           25), // Espaciado interno del botón
                       shape: RoundedRectangleBorder(
@@ -168,7 +179,7 @@ class LoginPageState extends State<LoginPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>  SingUpPage()));
+                                  builder: (context) => SingUpPage()));
                         },
                         child: const Text(
                           'Regístrate',

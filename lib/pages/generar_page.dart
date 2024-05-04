@@ -3,16 +3,17 @@ import 'package:app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:app/pages/generador_qr.dart';
-
 class GenerarVisita extends StatefulWidget {
   @override
   _GenerarVisitaState createState() => _GenerarVisitaState();
 }
 
 class _GenerarVisitaState extends State<GenerarVisita> {
-  final TextEditingController _nombreController = TextEditingController();
-  final TextEditingController _apellidoController = TextEditingController();
+  final TextEditingController _nombreVisitanteController = TextEditingController();
+  final TextEditingController _nombreVisitaController = TextEditingController();
+  final TextEditingController _empresaController = TextEditingController();
   final TextEditingController _motivoController = TextEditingController();
+  final TextEditingController _materialController = TextEditingController();
   final TextEditingController _modeloController = TextEditingController();
   final TextEditingController _placasController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -23,17 +24,22 @@ class _GenerarVisitaState extends State<GenerarVisita> {
       final form = _formKey.currentState;
       if (form!.validate()) {
         // Obtener la sesión de usuario actual
-Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const QRGeneratorPage(qrData: "12<<<345"))); 
         final User? user = supabase.auth.currentUser;
-        await supabase.from('visitas_registro').insert({
+        String? userId = user?.id;
+        
+        final List<Map<String, dynamic>> response = await supabase.from('visitas_registro').insert({
           'usuario': user?.id,
-          'nombre': _nombreController.text,
-          'apellido': _apellidoController.text,
+          'nombre_visitante': _nombreVisitanteController.text,
+          'nombre_visita': _nombreVisitaController.text,
+          'empresa': _empresaController.text,
+          'material': _materialController.text,
           'motivo': _motivoController.text,
           'vehiculo': _switchValue,
           'modelo': _modeloController.text,
           'placas': _placasController.text,
-        });
+        }).select();
+        print(response);
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CreateQrCode(textQrCode: response[0]['id'].toString()))); 
         // Operación completada con éxito
         debugPrint('Operación de inserción completada con éxito');
         
@@ -79,9 +85,9 @@ Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      controller: _nombreController,
+                      controller: _nombreVisitanteController,
                       decoration: const InputDecoration(
-                        labelText: 'Nombre',
+                        labelText: 'Nombre completo',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
@@ -93,14 +99,28 @@ Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const
                     ),
                     const SizedBox(height: 30),
                     TextFormField(
-                      controller: _apellidoController,
+                      controller: _nombreVisitaController,
                       decoration: const InputDecoration(
-                        labelText: 'Apellido',
+                        labelText: 'Nombre de la persona que visita',
                         border: OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Por favor, ingresa tu apellido. ';
+                          return 'Por favor, ingresa el nombre ';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _empresaController,
+                      decoration: const InputDecoration(
+                        labelText: 'Empresa',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Por favor, ingresa la empresa';
                         }
                         return null;
                       },
@@ -117,10 +137,21 @@ Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const
                       ),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Por favor, ingresa tu apellido. ';
+                          return 'Por favor, ingresa el motivo. ';
                         }
                         return null;
                       },
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _materialController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        labelText: 'Material',
+                        hintText: 'Ingresa la lista de tu material aquí...',
+                        border: OutlineInputBorder(),
+                      )
                     ),
                     const SizedBox(height: 20),
                     Row(
@@ -152,7 +183,7 @@ Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Por favor, ingresa tu apellido. ';
+                            return 'Por favor, ingresa el modelo. ';
                           }
                           return null;
                         },
@@ -166,7 +197,7 @@ Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return 'Por favor, ingresa tu apellido. ';
+                            return 'Por favor, ingresa las placas. ';
                           }
                           return null;
                         },
