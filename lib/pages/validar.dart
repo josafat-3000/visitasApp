@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:app/main.dart';
+import 'package:app/pages/home.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -27,6 +28,18 @@ class _QRViewExampleState extends State<QRViewExample> {
     }
     controller!.resumeCamera();
   }
+  Future<void> updateDatabaseAndBuildText() async {
+  if (result != null) {
+    print('SUCCESS');
+   try {
+    await supabase.from('visitas_registro').update({'hora_llegada':  DateTime.now().toUtc().toString()}).eq('id', '${result!.code}');
+    // Navegar a la pantalla de inicio
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Home()));
+  } catch (e) {
+    print('Error al actualizar la base de datos: $e');
+  }
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +54,12 @@ class _QRViewExampleState extends State<QRViewExample> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  if (result != null)
-                    const Text('Scan a code'),
+                  FutureBuilder(
+                  future: updateDatabaseAndBuildText(),
+                  builder: (context, snapshot) {
+                    return Text(result?.code ?? 'No se ha escaneado ningún código');
+                  },
+                ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,11 +138,8 @@ class _QRViewExampleState extends State<QRViewExample> {
       result = scanData;
     });
 
-    // Aquí realizas la inserción en Supabase cuando se lee el código QR
-    if (result != null) {
-      await supabase.from('visitas_registro').update({'hora_llegada':  DateTime.now().toUtc().toString()}).eq('id', '${result!.code}');
-      // También puedes insertar los datos del código QR aquí
-    }
+    
+    
   });
 }
 
