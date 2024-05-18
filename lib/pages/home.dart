@@ -4,7 +4,8 @@ import 'package:app/pages/generar_page.dart';
 import 'package:app/pages/visualizar_page.dart';
 import 'package:app/pages/validar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
+import 'package:app/pages/settings.dart';
+import 'package:app/pages/profile.dart';
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -15,6 +16,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   User? user;
   String result = '';
+  int _selectedTab = 1;
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +37,8 @@ class _HomeState extends State<Home> {
           fit: BoxFit.cover,
         ),
       ),
-      body: Container(
+      body: 
+      Container(
         padding: const EdgeInsets.all(30.0),
         child: ListView(
           children: [
@@ -78,15 +82,15 @@ class _HomeState extends State<Home> {
                       .from('visitas_registro')
                       .select()
                       .eq('usuario', user!.id);
-                  print('id: ');
-                  print(data);
+
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => VisualizarPage(data: data)),
+                    MaterialPageRoute(
+                        builder: (context) => VisualizarPage(data: data)),
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text(
                         'Usuario no autenticado',
                         style: TextStyle(color: Colors.white),
@@ -123,10 +127,13 @@ class _HomeState extends State<Home> {
             ),
             GestureDetector(
               onTap: () async {
+                // Navegar a la pantalla de inicio
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const Home()));
                 var res = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>const QRViewExample(),
+                      builder: (context) => const QRViewExample(),
                     ));
                 setState(() {
                   if (res is String) {
@@ -162,6 +169,72 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.only(
+          left: 16,
+          right: 16,
+        ),
+        child: BottomAppBar(
+          elevation: 0.0,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Container(
+              height: 80,
+              color: const Color.fromARGB(255, 0, 81, 121),
+              child: Row(
+                children: [
+                  navItem(
+                    Icons.settings,
+                    _selectedTab == 0,
+                    onTap: () => _onNavItemTapped(0),
+                  ),
+                  
+                  navItem(
+                    Icons.person,
+                    _selectedTab == 1,
+                    onTap: () => {
+                      _onNavItemTapped(1)
+                      },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
+  }
+
+  Widget navItem(IconData icon, bool selected, {Function()? onTap}) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        child: Icon(
+          icon,
+          color: selected ? Colors.white : Colors.white.withOpacity(0.4),
+        ),
+      ),
+    );
+  }
+
+  void _onNavItemTapped(int index) {
+    if (index != _selectedTab) {
+      setState(() {
+        _selectedTab = index;
+      });
+    } else {
+      // If the user taps on the same tab, you can implement additional logic here
+      print('Same tab pressed');
+    }
+    switch (index) {
+    case 0:
+      // Navigation to the Home Page
+      Navigator.push(context, MaterialPageRoute(builder: (context) => settings()));
+      break;
+    case 1:
+      // Navigation to the Notifications Page
+      Navigator.push(context, MaterialPageRoute(builder: (context) => profile()));
+      break;
+  }
   }
 }
