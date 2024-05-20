@@ -133,7 +133,7 @@ class _HomeState extends State<Home> {
                 var res = await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const QRViewExample(),
+                      builder: (context) => const Validar(),
                     ));
                 setState(() {
                   if (res is String) {
@@ -169,6 +169,24 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          // Acción a realizar al presionar el botón flotante
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GenerarVisita()),
+          );
+        },
+        
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        elevation: 8.0,
+        icon: Icon(Icons.key,color: Colors.white),
+        label: Text("Llave Virtu",
+        style: TextStyle(color: Colors.white, fontSize: 16),),
+        backgroundColor: const Color.fromARGB(255, 0, 81, 121),
+      ),
       bottomNavigationBar: Container(
         margin: EdgeInsets.only(
           left: 16,
@@ -186,14 +204,17 @@ class _HomeState extends State<Home> {
                   navItem(
                     Icons.settings,
                     _selectedTab == 0,
-                    onTap: () => _onNavItemTapped(0),
+                    onTap: () =>{
+                       
+                       //_onNavItemTapped(0)
+                    },
                   ),
                   
                   navItem(
                     Icons.person,
                     _selectedTab == 1,
                     onTap: () => {
-                      _onNavItemTapped(1)
+                     _onNavItemTapped(1)
                       },
                   ),
                 ],
@@ -233,7 +254,11 @@ class _HomeState extends State<Home> {
       break;
     case 1:
       // Navigation to the Notifications Page
-      Navigator.push(context, MaterialPageRoute(builder: (context) => profile()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(
+     userName: user?.userMetadata?['username'] ?? 'No username',
+      userUUID: user?.id ?? 'No UUID',
+      userEmail: user?.email ?? 'No email',
+    )));
       break;
   }
   }

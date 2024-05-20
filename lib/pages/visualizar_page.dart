@@ -1,61 +1,148 @@
 import 'package:flutter/material.dart';
-
 class VisualizarPage extends StatelessWidget {
   final List<Map<String, dynamic>> data;
-
-
 
   VisualizarPage({Key? key, required this.data}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<DataRow> rows = [];
-
-    for (var item in data) {
-      rows.add(DataRow(
-        cells: [
-          DataCell(Text(item['id'].toString())),
-          DataCell(Text(item['nombre_visitante'])),
-          DataCell(Text(item['nombre_visita'])),
-          DataCell(Text(item['empresa'])),
-          DataCell(Text(item['motivo'])),
-          DataCell(Text(item['material'])),
-          DataCell(Text(item['hora_llegada'] != null ? item['hora_llegada'].toString() : '')),
-          DataCell(Text(item['hora_salida'] != null ? item['hora_salida'].toString() : '')),
-          DataCell(Text(item['vehiculo'] ? 'Sí' : 'No')),
-          DataCell(Text(item['modelo'])),
-          DataCell(Text(item['placas'])),
-          DataCell(Text(item['usuario'])),
-        ],
-      ));
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Visualizar Datos'),
+        title: Text('Lista de Registros'),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+      body: ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          final item = data[index];
+          Color dotColor;
+
+          if (item['hora_salida'] != null) {
+            dotColor = Colors.black;
+          } else if (item['hora_llegada'] != null) {
+            dotColor = Colors.green;
+          } else {
+            dotColor = Colors.grey;
+          }
+
+          return Card(
+            elevation: 4,
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.all(16),
+              leading: CircleAvatar(
+                backgroundColor: dotColor,
+                radius: 20,
+              ),
+              title: Text(
+                '${item['nombre_visitante']}',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                item['hora_salida'] != null
+                    ? 'Hora de salida: ${item['hora_salida']}'
+                    : item['hora_llegada'] != null
+                        ? 'Hora de llegada: ${item['hora_llegada']}'
+                        : 'Registro pendiente',
+                style: TextStyle(fontSize: 14),
+              ),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetallePage(item: item),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+class DetallePage extends StatelessWidget {
+  final Map<String, dynamic> item;
+
+  DetallePage({Key? key, required this.item}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Detalles del Registro'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: DataTable(
-            columns: [
-              DataColumn(label: Text('ID')),
-              DataColumn(label: Text('Nombre visitante')),
-              DataColumn(label: Text('Nombre visita')),
-              DataColumn(label: Text('Empresa')),
-              DataColumn(label: Text('Motivo')),
-              DataColumn(label: Text('Material')),
-              DataColumn(label: Text('Hora Llegada')),
-              DataColumn(label: Text('Hora Salida')),
-              DataColumn(label: Text('Vehículo')),
-              DataColumn(label: Text('Modelo')),
-              DataColumn(label: Text('Placas')),
-              DataColumn(label: Text('Usuario')),
-            ],
-            rows: rows,
+          child: Center(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                headingRowColor: MaterialStateColor.resolveWith((states) => Colors.blueGrey),
+                headingTextStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                dataRowColor: MaterialStateColor.resolveWith((states) => Colors.grey[200]!),
+                dataTextStyle: TextStyle(
+                  fontSize: 16,
+                ),
+                columnSpacing: 20.0,
+                columns: [
+                  DataColumn(
+                    label: Text(
+                      'Campo',
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'Valor',
+                    ),
+                  ),
+                ],
+                rows: [
+                  buildDataRow('ID', item['ID'].toString()),
+                  buildDataRow('Nombre visitante', item['nombre_visitante'] ?? ''),
+                  buildDataRow('Nombre visita', item['nombre_visita'] ?? ''),
+                  buildDataRow('Empresa', item['empresa'] ?? ''),
+                  buildDataRow('Motivo', item['motivo'] ?? ''),
+                  buildDataRow('Material', item['material'] ?? ''),
+                  buildDataRow('Hora Llegada', item['hora_llegada'] ?? ''),
+                  buildDataRow('Hora Salida', item['hora_salida'] ?? ''),
+                  buildDataRow('Vehículo', item['vehiculo'] == true ? 'Sí' : 'No'),
+                  buildDataRow('Modelo', item['modelo'] ?? ''),
+                  buildDataRow('Placas', item['placas'] ?? ''),
+                  buildDataRow('Usuario', item['usuario'] ?? ''),
+                ],
+              ),
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  DataRow buildDataRow(String label, String value) {
+    return DataRow(
+      cells: [
+        DataCell(
+          Text(
+            label,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ),
+        DataCell(
+          Text(
+            value,
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+      ],
     );
   }
 }

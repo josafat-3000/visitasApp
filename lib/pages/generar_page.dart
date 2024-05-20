@@ -38,8 +38,14 @@ class _GenerarVisitaState extends State<GenerarVisita> {
           'modelo': _modeloController.text,
           'placas': _placasController.text,
         }).select();
-        print(response);
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CreateQrCode(textQrCode: response[0]['id'].toString()))); 
+        
+        print('\n');
+        print('\n');
+        print('\n');
+        print(response[0]['ID'].toString());
+        print('\n');
+        print('\n');
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => CreateQrCode(textQrCode: response[0]['ID'].toString()))); 
         // Operación completada con éxito
         debugPrint('Operación de inserción completada con éxito');
         

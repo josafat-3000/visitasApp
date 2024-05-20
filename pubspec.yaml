@@ -43,6 +43,7 @@ dependencies:
   simple_barcode_scanner: ^0.1.1
   qr_code_scanner: ^1.0.1
   dot_curved_bottom_nav: ^0.0.2
+  image_picker: ^0.8.4+4
 
 dev_dependencies:
   flutter_test:

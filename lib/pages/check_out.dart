@@ -1,61 +1,184 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:app/main.dart';
+import 'package:app/pages/home.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-class VisualizarPage extends StatelessWidget {
-  final List<Map<String, dynamic>> data;
+class QRViewExample2 extends StatefulWidget {
+  const QRViewExample2({Key? key}) : super(key: key);
 
+  @override
+  State<StatefulWidget> createState() => _QRViewExampleState();
+}
 
+class _QRViewExampleState extends State<QRViewExample2> {
+  Barcode? result;
+  QRViewController? controller;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
-  VisualizarPage({Key? key, required this.data}) : super(key: key);
+  @override
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller!.pauseCamera();
+    }
+    controller!.resumeCamera();
+  }
+
+  Future<void> updateDatabaseAndBuildText() async {
+    if (result != null) {
+      bool shouldUpdate = await showDialog<bool>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Confirmación'),
+            content: Text('¿Está seguro de autorizar la salida para el ID: ${result!.code}?'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: Text('Autorizar'),
+              ),
+            ],
+          );
+        },
+      ) ?? false;
+
+      if (shouldUpdate) {
+        print('SUCCESS');
+        print('Código escaneado: ${result!.code}');
+        try {
+          print('Intentando actualizar la base de datos...');
+          await supabase.from('visitas_registro').update({'hora_salida': DateTime.now().toUtc().toString()}).eq('ID', '${result!.code}');
+          print('Actualización exitosa.');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Salida registrada exitosamente'),backgroundColor: Colors.green,),
+          );
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => Home()),
+            (Route<dynamic> route) => false,
+          );
+        } catch (e) {
+          print('Error al actualizar la base de datos: $e');
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<DataRow> rows = [];
-
-    for (var item in data) {
-      rows.add(DataRow(
-        cells: [
-          DataCell(Text(item['id'].toString())),
-          DataCell(Text(item['nombre_visitante'])),
-          DataCell(Text(item['nombre_visita'])),
-          DataCell(Text(item['empresa'])),
-          DataCell(Text(item['motivo'])),
-          DataCell(Text(item['material'])),
-          DataCell(Text(item['hora_llegada'] != null ? item['hora_llegada'].toString() : '')),
-          DataCell(Text(item['hora_salida'] != null ? item['hora_salida'].toString() : '')),
-          DataCell(Text(item['vehiculo'] ? 'Sí' : 'No')),
-          DataCell(Text(item['modelo'])),
-          DataCell(Text(item['placas'])),
-          DataCell(Text(item['usuario'])),
-        ],
-      ));
-    }
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Visualizar Datos'),
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SingleChildScrollView(
-          child: DataTable(
-            columns: [
-              DataColumn(label: Text('ID')),
-              DataColumn(label: Text('Nombre visitante')),
-              DataColumn(label: Text('Nombre visita')),
-              DataColumn(label: Text('Empresa')),
-              DataColumn(label: Text('Motivo')),
-              DataColumn(label: Text('Material')),
-              DataColumn(label: Text('Hora Llegada')),
-              DataColumn(label: Text('Hora Salida')),
-              DataColumn(label: Text('Vehículo')),
-              DataColumn(label: Text('Modelo')),
-              DataColumn(label: Text('Placas')),
-              DataColumn(label: Text('Usuario')),
-            ],
-            rows: rows,
+      body: Column(
+        children: <Widget>[
+          Expanded(flex: 4, child: _buildQrView(context)),
+          Expanded(
+            flex: 1,
+            child: FittedBox(
+              fit: BoxFit.contain,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text(result?.code ?? 'No se ha escaneado ningún código'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            await controller?.toggleFlash();
+                            setState(() {});
+                          },
+                          child: FutureBuilder(
+                            future: controller?.getFlashStatus(),
+                            builder: (context, snapshot) {
+                              IconData flashIcon = snapshot.data == true
+                                  ? Icons.flash_on
+                                  : Icons.flash_off;
+                              return Icon(flashIcon);
+                            },
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            await controller?.flipCamera();
+                            setState(() {});
+                          },
+                          child: FutureBuilder(
+                            future: controller?.getCameraInfo(),
+                            builder: (context, snapshot) {
+                              return const Icon(Icons.loop);
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
+  }
+
+  Widget _buildQrView(BuildContext context) {
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 200.0
+        : 300.0;
+    return QRView(
+      key: qrKey,
+      onQRViewCreated: _onQRViewCreated,
+      overlay: QrScannerOverlayShape(
+          borderColor: Colors.red,
+          borderRadius: 10,
+          borderLength: 30,
+          borderWidth: 10,
+          cutOutSize: scanArea),
+      onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+    );
+  }
+
+  void _onQRViewCreated(QRViewController controller) {
+    setState(() {
+      this.controller = controller;
+    });
+    controller.scannedDataStream.listen((scanData) async {
+      setState(() {
+        result = scanData;
+      });
+      await updateDatabaseAndBuildText();
+    });
+  }
+
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    log('${DateTime.now().toIso8601String()}_onPermissionSet $p');
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No permission')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 }
